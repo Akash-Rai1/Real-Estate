@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        avatar: {
+            type: String,
+            default:
+                "https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-business-user-profile-vector-png-image_1541960.jpg",
+        },
     },
     { timestamps: true }
 );
