@@ -8,6 +8,12 @@ import {
     uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+    updateUserFaliure,
+    updateUserStart,
+    updateUserSuccess,
+} from "../redux/user/userSlice.js";
+import { useDispatch } from "react-redux";
 
 export default function Profile() {
     const fileRef = useRef(null);
@@ -16,6 +22,7 @@ export default function Profile() {
     const [formData, setFormData] = useState({});
     const [filePercentage, setFilePercentage] = useState(0);
     const [fileUploadError, setFileUploadError] = useState(false);
+    const dispach = useDispatch();
     console.log(formData);
 
     useEffect(() => {
@@ -47,12 +54,38 @@ export default function Profile() {
             }
         );
     };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            dispach(updateUserStart());
+            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+            if (data.success === false) {
+                dispach(updateUserFaliure(data.message));
+                return;
+            }
+
+            dispach(updateUserSuccess(data));
+            setUpdateSuccess(true);
+        } catch (error) {
+            dispach(updateUserFaliure(error.message));
+        }
+    };
 
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 
-            <form className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <input
                     type="file"
                     ref={fileRef}
@@ -85,15 +118,19 @@ export default function Profile() {
                 <input
                     type="text"
                     placeholder="username"
+                    defaultValue={currentUser.username}
                     id="username"
                     className="border p-3 rounded-lg"
+                    onChange={handleChange}
                 />
 
                 <input
                     type="email"
                     placeholder="email"
+                    defaultValue={currentUser.email}
                     id="email"
                     className="border p-3 rounded-lg"
+                    onChange={handleChange}
                 />
 
                 <input
@@ -101,8 +138,12 @@ export default function Profile() {
                     placeholder="password"
                     id="password"
                     className="border p-3 rounded-lg"
+                    onChange={handleChange}
                 />
-                <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-70">
+                <button
+                    type="submit"
+                    className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-70"
+                >
                     Update
                 </button>
                 <div className="flex justify-between mt-5">

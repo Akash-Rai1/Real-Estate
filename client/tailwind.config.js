@@ -6,3 +6,5 @@ export default {
     },
     plugins: [],
 };
+
+// simply copied from the site, tell to apply tailwind to index.html, evry other file that has following extension js,ts,jsx,tsxetc

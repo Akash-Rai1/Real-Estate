@@ -53,3 +53,5 @@ const Header = () => {
 };
 
 export default Header;
+
+// create navbar for all the pages, added logo, searchbar(usinng form and search icon), and link to other page like home, about, signin etc 
