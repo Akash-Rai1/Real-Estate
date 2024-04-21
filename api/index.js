@@ -5,7 +5,7 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 
-dotenv.config(); // using this we can use .env file
+dotenv.config(); // using this we can use .env file for mongodb
 mongoose
     .connect(process.env.Mongo)
     .then(() => {
